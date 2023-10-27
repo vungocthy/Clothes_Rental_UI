@@ -13,35 +13,42 @@ import {
   orderBy,
 } from "firebase/firestore/lite";
 import { firebaseAuth, firestore } from "../firebase.config";
+import {BASE_URL,BEAR_TOKEN_OWNER} from "../constants/index.js";
 
 const collectionName = "categories";
 
+const requestDeleteOptions = {
+  method: 'DELETE',
+  headers: { 
+    "Authorization": `Bearer ${BEAR_TOKEN_OWNER}`
+  }
+};
+
+
 export async function saveCategory(category) {
-  const db = firestore;
-  const auth = firebaseAuth;
-  const now = Timestamp.now();
+  const formData = new FormData();
 
-  if (!auth.currentUser) {
-    throw Error("unauthorized");
-  }
-
-  category["updatedAt"] = now.toMillis();
-  category["updatedBy"] = auth.currentUser.email;
-
-  if (category.id) {
-    const id = category.id;
-    delete category.id;
-    await updateDoc(doc(db, collectionName, id), category);
-    return { ...category };
-  }
-
-  delete category.id;
-  category["createdAt"] = now.toMillis();
-  category["createdBy"] = auth.currentUser.email;
-
-  const docRef = await addDoc(collection(db, collectionName), category);
-
-  return { ...category, id: docRef.id };
+  formData.append('Id', category.id);
+  formData.append('CategoryName', category.name);
+  console.log(category);
+  console.log(category.id);
+  console.log(category.name);
+  var dataJson=JSON.stringify({
+    Id:'1d143a74-91e1-402a-a0bd-7f7cf09cec01',
+    CategoryName:'category.name'
+  });
+  console.log(dataJson);
+  await fetch(BASE_URL+'/api/categories/'+category.id, 
+  {
+    method: 'PUT',
+    headers: {
+       "Authorization": `Bearer ${BEAR_TOKEN_OWNER}`
+      },
+    body:dataJson
+  })
+  .then(response => response.json())
+  .then(data => console.log(data))
+  .catch(error => console.error(error));
 }
 
 export async function getCategory(id) {
@@ -53,56 +60,23 @@ export async function getCategory(id) {
 }
 
 export async function deleteCategory(id) {
-  const db = firestore;
-
-  const q = query(
-    collection(db, "books"),
-    where("category", "==", id),
-    limit(1)
-  );
-
-  const snapShot = await getDocs(q);
-
-  if (!snapShot.empty) {
-    throw Error("Category referenced by books.");
-  }
-
-  await deleteDoc(doc(db, collectionName, id));
+  await fetch(BASE_URL+'/api/categories/'+id, requestDeleteOptions)
+  .then(() => console.log('Delete successful'))
+  .catch((err)=>{
+    console.log(err.message);
+  });
 }
 
+
+
 export async function getCategories() {
-  const db = firestore;
-  // let q;
-
-  // if (lastDocumentId) {
-  //   let last = await getDoc(doc(db, collectionName, lastDocumentId));
-  //   q = query(
-  //     collection(db, collectionName),
-  //     startAfter(last),
-  //     orderBy("createdAt", "desc"),
-  //     limit(15)
-  //   );
-  // } else if (firstDocumentId) {
-  //   let first = await getDoc(doc(db, collectionName, firstDocumentId));
-  //   q = query(
-  //     collection(db, collectionName),
-  //     endBefore(first),
-  //     orderBy("createdAt", "desc"),
-  //     limit(15)
-  //   );
-  // } else {
-  //   q = query(
-  //     collection(db, collectionName),
-  //     orderBy("createdAt", "desc"),
-  //     limit(15)
-  //   );
-  // }
-
-  const q = query(collection(db, collectionName), orderBy("createdAt", "desc"));
-
-  const snapShot = await getDocs(q);
-
-  return snapShot.docs.map((doc) => {
-    return { ...doc.data(), id: doc.id };
-  });
+  console.log(BASE_URL);
+  return await fetch(BASE_URL+'/api/categories',
+    {
+      headers: {"Authorization": `Bearer ${BEAR_TOKEN_OWNER}`}
+    })
+    .then((response) => response.json())
+    .catch((err) => {
+      console.log(err.message);
+    });
 }

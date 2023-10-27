@@ -13,7 +13,6 @@ const homeBannerId = "homeBanner";
 
 export async function uploadImage(file) {
   const db = firestore;
-
   if (file === null || file.size <= 0) {
     throw new Error("Invalid image file.");
   }
@@ -23,7 +22,6 @@ export async function uploadImage(file) {
     file.name
   )}`;
   const bannersRef = ref(storage, `banners/${fileName}`);
-
   try {
     await runTransaction(db, async (transaction) => {
       const bDoc = await transaction.get(docRef);

@@ -15,7 +15,7 @@ function SignIn() {
   const [state, requestSignIn] = useAPIRequest(signIn);
 
   const formik = useFormik({
-    initialValues: { email: "lumbinibookclub.dev@gmail.com", password: "" },
+    initialValues: { email: "demo@gmail.com", password: "@Abcaz12345" },
     validate: (values) => {
       let errors = {};
       if (!values.email) {

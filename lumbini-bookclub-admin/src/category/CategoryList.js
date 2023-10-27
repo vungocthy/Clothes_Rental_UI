@@ -1,6 +1,6 @@
 import { PencilAltIcon, TrashIcon } from "@heroicons/react/outline";
 import { PlusIcon } from "@heroicons/react/solid";
-import { useContext, useEffect, useState } from "react";
+import React,{ useContext, useEffect, useState } from "react";
 import Alert from "../common/Alert";
 import { DangerButton, PrimaryButton } from "../common/Buttons";
 import Card from "../common/Card";
@@ -13,13 +13,6 @@ import { deleteCategory, getCategories } from "./CategoryRepo";
 import { parseError, formatTimestamp } from "../common/utils";
 import { toast } from "react-toastify";
 
-// const list = [
-//   { id: 1, name: "Category Name", createdAt: "Feb 6, 2022 9:31 PM" },
-//   { id: 2, name: "Category Name", createdAt: "Feb 6, 2022 9:31 PM" },
-//   { id: 3, name: "Category Name", createdAt: "Feb 6, 2022 9:31 PM" },
-//   { id: 4, name: "Category Name", createdAt: "Feb 6, 2022 9:31 PM" },
-//   { id: 5, name: "Category Name", createdAt: "Feb 6, 2022 9:31 PM" },
-// ];
 
 function CategoryList() {
   const [showEdit, setShowEdit] = useState(false);
@@ -34,13 +27,13 @@ function CategoryList() {
   const [listState, requestCategories] = useAPIRequest(getCategories);
   const [delState, requestDelete] = useAPIRequest(deleteCategory);
 
+//#region  Get All Category
   useEffect(() => {
     requestCategories();
 
     return () => {
       loadingContext.setLoading(false);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -48,10 +41,13 @@ function CategoryList() {
     if (listState.status === Actions.success) {
       setList(listState.payload ?? []);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [listState]);
 
-  useEffect(() => {
+//#endregion
+
+//#region Delete Category
+
+useEffect(() => {
     loadingContext.setLoading(delState.status === Actions.loading);
     if (delState.status === Actions.success) {
       toast.success("Category deleted successfully.");
@@ -60,8 +56,9 @@ function CategoryList() {
     if (delState.status === Actions.failure) {
       toast.error(parseError(delState.error));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [delState]);
+
+//#endregion
 
   function getActionButtons(c) {
     return (
@@ -148,8 +145,8 @@ function CategoryList() {
                 {list.map((c) => {
                   return (
                     <tr key={c.id}>
-                      <Table.TD>{c.name}</Table.TD>
-                      <Table.TD>{formatTimestamp(c.createdAt)}</Table.TD>
+                      <Table.TD>{c.categoryName}</Table.TD>
+                      <Table.TD>{formatTimestamp(c.creationDate)}</Table.TD>
                       <Table.TD>{getActionButtons(c)}</Table.TD>
                     </tr>
                   );
