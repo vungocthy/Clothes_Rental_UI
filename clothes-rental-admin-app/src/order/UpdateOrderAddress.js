@@ -1,6 +1,6 @@
 import { useFormik } from "formik";
-import { DefaultButton, PrimaryButton } from "../common/Buttons";
-import { TextArea } from "../common/FormControls";
+import { DefaultButton, PrimaryButton } from "../components/common/Buttons";
+import { TextArea } from "../components/common/FormControls";
 
 function UpdateOrderAddress({ address = "", handleClose }) {
   const formik = useFormik({

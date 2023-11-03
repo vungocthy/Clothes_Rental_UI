@@ -13,7 +13,7 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore/lite";
-import { pageSizeLimit } from "../common/app.config";
+import { pageSizeLimit } from "../components/common/app.config";
 import { firebaseAuth, firestore } from "../firebase.config";
 
 const collectionName = "orders";

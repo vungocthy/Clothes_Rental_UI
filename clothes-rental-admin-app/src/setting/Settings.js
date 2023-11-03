@@ -1,5 +1,5 @@
 import { Tab } from "@headlessui/react";
-import Card from "../common/Card";
+import Card from "../components/common/Card";
 import GeneralSetting from "./GeneralSetting";
 import OrderSetting from "./OrderSetting";
 import ProductSetting from "./ProductSetting";

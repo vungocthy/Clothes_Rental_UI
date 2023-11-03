@@ -1,14 +1,14 @@
 import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import Alert from "../common/Alert";
-import { Actions, useAPIRequest } from "../common/api-request";
-import Card from "../common/Card";
-import { LoadingContext } from "../common/Contexts";
-import { DatePickerInput, Input, Select } from "../common/FormControls";
-import Pagination from "../common/Pagination";
-import Table from "../common/Table";
-import { formatPrice, formatTimestamp, parseError } from "../common/utils";
+import Alert from "../components/common/Alert";
+import { Actions, useAPIRequest } from "../components/common/api-request";
+import Card from "../components/common/Card";
+import { LoadingContext } from "../components/common/Contexts";
+import { DatePickerInput, Input, Select } from "../components/common/FormControls";
+import Pagination from "../components/common/Pagination";
+import Table from "../components/common/Table";
+import { formatPrice, formatTimestamp, parseError } from "../components/common/utils";
 import { getOrders } from "./OrderRepo";
 
 function OrderList() {

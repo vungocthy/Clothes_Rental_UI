@@ -3,14 +3,14 @@ import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { baseImagePath } from "../App";
-import Alert from "../common/Alert";
-import { Actions, useAPIRequest } from "../common/api-request";
-import { DangerButton, DefaultButton } from "../common/Buttons";
-import Card from "../common/Card";
-import { LoadingContext } from "../common/Contexts";
-import { Select } from "../common/FormControls";
-import Modal, { ConfirmModal } from "../common/Modal";
-import { formatPrice, formatTimestamp, parseError } from "../common/utils";
+import Alert from "../components/common/Alert";
+import { Actions, useAPIRequest } from "../components/common/api-request";
+import { DangerButton, DefaultButton } from "../components/common/Buttons";
+import Card from "../components/common/Card";
+import { LoadingContext } from "../components/common/Contexts";
+import { Select } from "../components/common/FormControls";
+import Modal, { ConfirmModal } from "../components/common/Modal";
+import { formatPrice, formatTimestamp, parseError } from "../components/common/utils";
 import {
   getOrder,
   removeOrderItem,

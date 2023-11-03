@@ -1,11 +1,11 @@
 import { useFormik } from "formik";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
-import Alert from "../common/Alert";
-import { Actions, useAPIRequest } from "../common/api-request";
-import { DefaultButton, PrimaryButton } from "../common/Buttons";
-import { PasswordInput } from "../common/FormControls";
-import { parseError } from "../common/utils";
+import Alert from "../components/common/Alert";
+import { Actions, useAPIRequest } from "../components/common/api-request";
+import { DefaultButton, PrimaryButton } from "../components/common/Buttons";
+import { PasswordInput } from "../components/common/FormControls";
+import { parseError } from "../components/common/utils";
 import { changePassword } from "./AuthRepo";
 
 function ChangePassword({ handleClose = () => {} }) {

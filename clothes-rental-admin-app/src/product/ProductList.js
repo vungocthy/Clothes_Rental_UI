@@ -1,58 +1,45 @@
 import { PencilAltIcon, TrashIcon } from "@heroicons/react/outline";
 import { PlusIcon } from "@heroicons/react/solid";
-import { DangerButton, PrimaryButton } from "../common/Buttons";
-import Card from "../common/Card";
-import Table from "../common/Table";
-import Pagination from "../common/Pagination";
+import { DangerButton, PrimaryButton } from "../components/common/Buttons";
+import Card from "../components/common/Card";
+import Table from "../components/common/Table";
+import Pagination from "../components/common/Pagination";
 import { Link } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
-import { Actions, useAPIRequest } from "../common/api-request";
+import { Actions, useAPIRequest } from "../components/common/api-request";
 import { deleteProduct, getProducts } from "./ProductRepo";
-import { LoadingContext } from "../common/Contexts";
-import { formatPrice, formatTimestamp, parseError } from "../common/utils";
+import { LoadingContext } from "../components/common/Contexts";
+import { formatPrice, formatTimestamp, parseError } from "../components/common/utils";
 import { toast } from "react-toastify";
-import { ConfirmModal } from "../common/Modal";
+import { ConfirmModal } from "../components/common/Modal";
 import { baseImagePath } from "../App";
-import Alert from "../common/Alert";
-import { CheckBox, Input, Select } from "../common/FormControls";
-import { getCategories } from "../category/CategoryRepo";
-import { getOwners } from "../owner/OwnerRepo";
-import { default as ReactSelect } from "react-select";
+import Alert from "../components/common/Alert";
+import { useParams } from "react-router-dom";
 
 function ProductList() {
+  let params = useParams();
   const loadingContext = useContext(LoadingContext);
 
   const [showConfirm, setShowConfirm] = useState(false);
   const [deleteId, setDeleteId] = useState();
 
   const [productList, setProductList] = useState([]);
-  const [categoryList, setCategoryList] = useState([]);
-  const [authorList, setAuthorList] = useState([]);
-
   const [productListState, requestProducts] = useAPIRequest(getProducts);
-  const [categoryListState, requestCategories] = useAPIRequest(getCategories);
-  const [authorListState, requestAuthors] = useAPIRequest(getOwners);
 
   const [delState, requestDelete] = useAPIRequest(deleteProduct);
 
-  const [productCode, setProductCode] = useState("");
-
   const [query, setQuery] = useState({
-    first: null,
-    last: null,
+    shopId:params.id,
+    pageIndex: 0,
   });
 
   const [paging, setPaging] = useState({ hasPrev: false, hasNext: false });
 
   useEffect(() => {
-    //requestProducts();
-    requestCategories();
-    requestAuthors();
-
+    
     return () => {
       loadingContext.setLoading(false);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -65,54 +52,35 @@ function ProductList() {
         hasPrev: productListState.payload?.hasPrev,
       });
       if (payload.length === 0) {
-        toast.info("No book found.");
+        toast.info("No Product found.");
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [productListState]);
 
-  useEffect(() => {
-    if (categoryListState.status === Actions.success) {
-      let payload = categoryListState.payload ?? [];
-      setCategoryList(payload);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [categoryListState]);
 
-  useEffect(() => {
-    if (authorListState.status === Actions.success) {
-      let payload = authorListState.payload ?? [];
-      setAuthorList(payload);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authorListState]);
 
   useEffect(() => {
     loadingContext.setLoading(delState.status === Actions.loading);
     if (delState.status === Actions.success) {
-      toast.success("Book deleted successfully.");
-      requestProducts();
+      toast.success("Product deleted successfully.");
+      requestProducts({
+        shopId:params.id,
+        pageIndex: 0
+      });
     }
     if (delState.status === Actions.failure) {
       toast.error(parseError(delState.error));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [delState]);
 
   useEffect(() => {
-    // if (query.first || query.last) {
-    //   requestProducts(query);
-    // }
-
     requestProducts(query);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query]);
 
   function handleQueryChange(value) {
     setQuery((q) => ({
       ...q,
       ...value,
-      code: productCode,
       first: null,
       last: null,
     }));
@@ -169,7 +137,7 @@ function ProductList() {
       <Card>
         <Card.Header>
           <div className="flex items-center">
-            <h3 className="text-gray-600">Books</h3>
+            <h3 className="text-gray-600">Shop - Demo</h3>
             <Link to={"/books/new"} className="ml-auto">
               <PrimaryButton onClick={() => {}}>
                 <PlusIcon className="w-5 h-5 mr-2" />
@@ -179,140 +147,7 @@ function ProductList() {
           </div>
         </Card.Header>
         <Card.Body className="flex flex-col space-y-2">
-          <div className="flex flex-wrap items-center">
-            <div className="mr-3 mb-2">
-              <Input
-                name="productCode"
-                placeholder="Search by code"
-                value={productCode}
-                onChange={(e) => setProductCode(e.target.value)}
-                onKeyPress={(e) => {
-                  if (e.key === "Enter") {
-                    setQuery((q) => ({
-                      ...q,
-                      code: productCode,
-                      first: null,
-                      last: null,
-                    }));
-                  }
-                }}
-              />
-            </div>
-            <div className="mr-3 mb-2">
-              <ReactSelect
-                name="author"
-                styles={{
-                  control: (css, state) => ({
-                    ...css,
-                    width: "200px",
-                    padding: 2,
-                    boxShadow: "none",
-                  }),
-                }}
-                theme={(theme) => ({
-                  ...theme,
-                  colors: {
-                    ...theme.colors,
-                    primary25: "#e0e7ff",
-                    primary: "#6366f1",
-                  },
-                })}
-                defaultValue={query.author ?? ""}
-                onChange={(newValue, action) => {
-                  handleQueryChange({ author: newValue?.id });
-                }}
-                isDisabled={false}
-                isLoading={false}
-                isClearable={true}
-                isRtl={false}
-                isSearchable={true}
-                placeholder="By author"
-                options={authorList}
-                getOptionValue={(op) => op.id}
-                getOptionLabel={(op) => op.name}
-              >
-                {/* <option value={""}>All Author</option>
-                {authorList.map((e) => {
-                  return (
-                    <option key={e.id} value={e.id}>
-                      {e.name}
-                    </option>
-                  );
-                })} */}
-              </ReactSelect>
-            </div>
-            <div className="mr-3 mb-2">
-              <Select
-                name="category"
-                value={query.category ?? ""}
-                onChange={(e) => {
-                  handleQueryChange({ category: e.target.value });
-                }}
-              >
-                <option value={""}>All Category</option>
-                {categoryList.map((e) => {
-                  return (
-                    <option key={e.id} value={e.id}>
-                      {e.name}
-                    </option>
-                  );
-                })}
-              </Select>
-            </div>
-            <div className="mr-3 mb-2">
-              <Select
-                name="status"
-                value={query.status ?? ""}
-                onChange={(e) => {
-                  handleQueryChange({ status: e.target.value });
-                }}
-              >
-                <option value={""}>All Status</option>
-                <option value={"IN_STOCK"}>In Stock</option>
-                <option value={"OUT_OF_STOCK"}>Out Of Stock</option>
-              </Select>
-            </div>
-            <div className="mr-3 mb-2">
-              <CheckBox
-                label="Promotion"
-                name="promotion"
-                checked={query.promotion ?? false}
-                onChange={(e) => {
-                  handleQueryChange({ promotion: e.target.checked });
-                }}
-              />
-            </div>
-            <div className="mr-3 mb-2">
-              <CheckBox
-                label="New Arrival"
-                name="newArrival"
-                checked={query.newArrival ?? false}
-                onChange={(e) => {
-                  handleQueryChange({ newArrival: e.target.checked });
-                }}
-              />
-            </div>
-            <div className="mr-3 mb-2">
-              <CheckBox
-                label="Popular"
-                name="popular"
-                checked={query.popular ?? false}
-                onChange={(e) => {
-                  handleQueryChange({ popular: e.target.checked });
-                }}
-              />
-            </div>
-            <div className="mr-3 mb-2">
-              <CheckBox
-                label="Hidden"
-                name="hidden"
-                checked={query.hidden ?? false}
-                onChange={(e) => {
-                  handleQueryChange({ hidden: e.target.checked });
-                }}
-              />
-            </div>
-          </div>
+          {/* Option here */}
           <div className="overflow-x-auto">
             <Table>
               <Table.THead>
@@ -320,8 +155,8 @@ function ProductList() {
                   <Table.TH className="w-40">Image</Table.TH>
                   <Table.TH className="w-40 md:w-full">Name</Table.TH>
                   <Table.TH className="w-40">Price</Table.TH>
-                  <Table.TH className="w-24">Code</Table.TH>
-                  <Table.TH className="w-60">Created At</Table.TH>
+                  <Table.TH className="w-24">Material</Table.TH>
+                  <Table.TH className="w-60">Category</Table.TH>
                   <Table.TH className="w-44"></Table.TH>
                 </tr>
               </Table.THead>
@@ -332,16 +167,16 @@ function ProductList() {
                       <Table.TD>
                         <div className="">
                           <img
-                            src={getProductImageUrl(p)}
+                            src={p.productImages[0].fileUrl}
                             alt="product"
                             className="w-full aspect-auto rounded drop-shadow-md"
                           />
                         </div>
                       </Table.TD>
-                      <Table.TD>{p.name}</Table.TD>
-                      <Table.TD>{`${formatPrice(p.price)} Ks`}</Table.TD>
-                      <Table.TD>{p.code}</Table.TD>
-                      <Table.TD>{formatTimestamp(p.createdAt)}</Table.TD>
+                      <Table.TD>{p.productName}</Table.TD>
+                      <Table.TD>{formatPrice(p.price)}</Table.TD>
+                      <Table.TD>{p.material}</Table.TD>
+                      <Table.TD>{formatTimestamp(p.categoryName)}</Table.TD>
                       <Table.TD>{getActtionButtons(p)}</Table.TD>
                     </tr>
                   );
@@ -356,19 +191,18 @@ function ProductList() {
               query={query}
               hasPrev={paging.hasPrev}
               hasNext={paging.hasNext}
-              onPrev={(first) => {
+              onPrev={() => {
                 const q = { ...query };
-                q.first = first;
-                q.last = null;
+                q.pageIndex = q.pageIndex-1;
                 setQuery(q);
               }}
-              onNext={(last) => {
+              onNext={() => {
                 const q = { ...query };
-                q.last = last;
-                q.first = null;
+                q.pageIndex = q.pageIndex+1;
                 setQuery(q);
               }}
             />
+
           </div>
         </Card.Body>
       </Card>

@@ -3,18 +3,18 @@ import { PlusIcon } from "@heroicons/react/solid";
 import { useFormik } from "formik";
 import { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import Alert from "../common/Alert";
-import { Actions, useAPIRequest } from "../common/api-request";
+import Alert from "../components/common/Alert";
+import { Actions, useAPIRequest } from "../components/common/api-request";
 import {
   DangerButton,
   PrimaryButton,
   PrimaryOutlineButton,
-} from "../common/Buttons";
-import Card from "../common/Card";
-import { LoadingContext } from "../common/Contexts";
-import { Input } from "../common/FormControls";
-import Modal from "../common/Modal";
-import { parseError } from "../common/utils";
+} from "../components/common/Buttons";
+import Card from "../components/common/Card";
+import { LoadingContext } from "../components/common/Contexts";
+import { Input } from "../components/common/FormControls";
+import Modal from "../components/common/Modal";
+import { parseError } from "../components/common/utils";
 import PaymentEditDialog from "./PaymentEditDialog";
 import { getOrderSetting, saveOrderSetting } from "./SettingRepo";
 

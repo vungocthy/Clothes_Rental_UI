@@ -1,6 +1,6 @@
 import { useFormik } from "formik";
-import { DefaultButton, PrimaryButton } from "../common/Buttons";
-import { Input } from "../common/FormControls";
+import { DefaultButton, PrimaryButton } from "../components/common/Buttons";
+import { Input } from "../components/common/FormControls";
 
 function PaymentEditDialog({
   index,

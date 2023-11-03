@@ -13,7 +13,7 @@ function ProductImage({ image, onDelete = () => {}, className = "" }) {
       };
       reader.readAsDataURL(image);
     } else if (image && image.trim().length > 0) {
-      setSrc(`${baseImagePath}/books%2F${image}?alt=media`);
+      setSrc(`${image}`);
     }
   }, [image]);
 

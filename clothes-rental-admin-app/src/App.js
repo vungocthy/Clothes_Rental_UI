@@ -2,21 +2,21 @@ import { onAuthStateChanged } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { Route, Routes } from "react-router";
 import SignIn from "./authentication/SignIn";
-import OwnerList from "./owner/OwnerList";
-import ShopList from "./shop/ShopList";
-import CategoryList from "./category/CategoryList";
-import { AuthContext, LoadingContext } from "./common/Contexts";
-import Dashboard from "./dashboard/Dashboard";
-import NotFound from "./error/404";
+import OwnerList from "./pages/owner/OwnerList";
+import ShopList from "./pages/shop/ShopList";
+import CategoryList from "./pages/category/CategoryList";
+import { AuthContext, LoadingContext } from "./components/common/Contexts";
+import Dashboard from "./pages/dashboard/Dashboard";
+import NotFound from "./components/error/404";
 import { firebaseAuth } from "./firebase.config";
-import NotificationList from "./notification/NotificationList";
+import NotificationList from "./pages/notification/NotificationList";
 import OrderDetail from "./order/OrderDetail";
 import OrderList from "./order/OrderList";
-import ProductEdit from "./product/ProductEdit";
+import {ProductEdit,ProductAdd} from "./product/ProductEdit";
 import ProductList from "./product/ProductList";
 import Settings from "./setting/Settings";
-import Template from "./template/Template";
-import CustomerList from "./customer/CustomerList";
+import Template from "./components/template/Template";
+import CustomerList from "./pages/customer/CustomerList";
 
 export const baseImagePath = process.env.REACT_APP_FIREBASE_STORAGE_PATH;
 
@@ -75,15 +75,24 @@ function App() {
         <Routes>
           <Route path="/" element={<Template />}>
             <Route index element={<Dashboard />} />
-            <Route path="shops" element={<ShopList />} />
+            {/* <Route path="shops" element={<ShopList />} /> */}
+            <Route path="shops">
+              <Route index element={<ShopList />} />
+              <Route path=":id/products" >
+                  <Route index element={<ProductList />} />
+                  <Route path="new" element={<ProductAdd />} />
+                  <Route path=":productid" element={<ProductEdit />} />
+              </Route>
+              <Route path=":id/combos" element={<ProductList />} />
+            </Route>
             <Route path="categories" element={<CategoryList />} />
             <Route path="owners" element={<OwnerList/>} />
             <Route path="customers" element={<CustomerList/>} />
-            <Route path="books">
+            {/* <Route path="books">
               <Route index element={<ProductList />} />
-              <Route path="new" element={<ProductEdit />} />
+              <Route path="new" element={<ProductAdd />} />
               <Route path=":id" element={<ProductEdit />} />
-            </Route>
+            </Route> */}
             <Route path="orders">
               <Route index element={<OrderList />} />
               <Route path=":id" element={<OrderDetail />} />

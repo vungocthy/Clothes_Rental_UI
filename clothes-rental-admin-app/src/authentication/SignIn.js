@@ -1,12 +1,12 @@
 import { useFormik } from "formik";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Alert from "../common/Alert";
-import { Actions, useAPIRequest } from "../common/api-request";
-import { PrimaryButton } from "../common/Buttons";
-import Card from "../common/Card";
-import { Input, PasswordInput } from "../common/FormControls";
-import Footer from "../template/Footer";
+import Alert from "../components/common/Alert";
+import { Actions, useAPIRequest } from "../components/common/api-request";
+import { PrimaryButton } from "../components/common/Buttons";
+import Card from "../components/common/Card";
+import { Input, PasswordInput } from "../components/common/FormControls";
+import Footer from "../components/template/Footer";
 import { parseAuthError } from "./AuthErrors";
 import { signIn } from "./AuthRepo";
 
