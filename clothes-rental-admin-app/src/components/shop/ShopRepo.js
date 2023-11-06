@@ -11,7 +11,7 @@ const requestDeleteOptions = {
 export async function addShop(shop) {
   console.log("Add Shop!");
   var formData= new FormData();
-  formData.append("id",shop.id);
+  //formData.append("id",shop.id);
   formData.append("shopName",shop.shopName);
   formData.append("shopEmail",shop.shopEmail);
   formData.append("shopPhone",shop.shopPhone);

@@ -17,6 +17,7 @@ import ProductList from "./product/ProductList";
 import Settings from "./setting/Settings";
 import Template from "./components/template/Template";
 import CustomerList from "./pages/customer/CustomerList";
+import ComboList from "./pages/combo/ComboList";
 
 export const baseImagePath = process.env.REACT_APP_FIREBASE_STORAGE_PATH;
 
@@ -83,7 +84,7 @@ function App() {
                   <Route path="new" element={<ProductAdd />} />
                   <Route path=":productid" element={<ProductEdit />} />
               </Route>
-              <Route path=":id/combos" element={<ProductList />} />
+              <Route path=":id/combos" element={<ComboList/>} />
             </Route>
             <Route path="categories" element={<CategoryList />} />
             <Route path="owners" element={<OwnerList/>} />

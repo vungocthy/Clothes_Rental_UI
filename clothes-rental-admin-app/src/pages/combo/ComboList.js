@@ -10,12 +10,13 @@ import { LoadingContext } from "../../components/common/Contexts";
 import Modal, { ConfirmModal } from "../../components/common/Modal";
 import Table from "../../components/common/Table";
 import {  parseError } from "../../components/common/utils";
-import {ShopAdd, ShopEdit} from "../../components/shop/modal/ShopEdit";
-import { deleteShop, getShops } from "../../components/shop/ShopRepo";
+import { ComboAdd,ComboEdit } from "../../components/combo/modal/ComboEdit";
+import { deleteCombo,getCombos } from "../../components/combo/ComboRepo";
 import { Select } from "../../components/common/FormControls";
 import { useNavigate } from "react-router-dom";
+import { DropDownProduct } from "../../components/combo/DropdownProduct";
 
-function ShopList() {
+function ComboList() {
   const [showEdit, setShowEdit] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
@@ -24,14 +25,14 @@ function ShopList() {
   const loadingContext = useContext(LoadingContext);
 
   const [list, setList] = useState([]);
-  const [shop, setShop] = useState();
+  const [Combo, setCombo] = useState();
   const [deleteId, setDeleteId] = useState();
 
-  const [listState, requestShops] = useAPIRequest(getShops);
-  const [delState, requestDelete] = useAPIRequest(deleteShop);
+  const [listState, requestCombos] = useAPIRequest(getCombos);
+  const [delState, requestDelete] = useAPIRequest(deleteCombo);
 
   useEffect(() => {
-    requestShops();
+    requestCombos();
 
     return () => {
       loadingContext.setLoading(false);
@@ -49,7 +50,7 @@ function ShopList() {
     loadingContext.setLoading(delState.status === Actions.loading);
     if (delState.status === Actions.success) {
       toast.success("Author deleted successfully.");
-      requestShops();
+      requestCombos();
     }
     if (delState.status === Actions.failure) {
       toast.error(parseError(delState.error));
@@ -61,13 +62,13 @@ function ShopList() {
     console.log(a.shop.id);
     switch(a.status){
       case "COMBO":
-        navigate(`/shops/${a.shop.id}/combos`, { replace: true });
+            
         break;
       case "PRODUCT":
           navigate(`/shops/${a.shop.id}/products`, { replace: true });
         break;
       case "UPDATE":
-          setShop(a.shop);
+          setCombo(a.shop);
           setShowEdit(true);
         break;
       case "DELETE":
@@ -105,28 +106,28 @@ function ShopList() {
   return (
     <div className="flex flex-col space-y-4">
       <Modal title="Add Shop" isOpen={showAdd}>
-        <ShopAdd
-          shop={shop}
+        <ComboAdd
+          combo={Combo}
           handleClose={(result) => {
             setShowAdd(false);
-            setShop(undefined);
+            setCombo(undefined);
             if (result === true) {
               toast.success("Shop save successfully.");
-              requestShops();
+              requestCombos();
             }
           }}
         />
       </Modal>
 
       <Modal title="Edit Shop" isOpen={showEdit}>
-        <ShopEdit
-          shop={shop}
+        <ComboEdit
+          combo={Combo}
           handleClose={(result) => {
             setShowEdit(false);
-            setShop(undefined);
+            setCombo(undefined);
             if (result === true) {
               toast.success("Shop save successfully.");
-              requestShops();
+              requestCombos();
             }
           }}
         />
@@ -170,10 +171,10 @@ function ShopList() {
                 <tr>
                   <Table.TH className="w-25">Image</Table.TH>
                   <Table.TH className="w-22">Name</Table.TH>
-                  <Table.TH className="w-60">Email</Table.TH>
-                  <Table.TH className="w-25">Phone</Table.TH>
-                  <Table.TH className="w-30">Address</Table.TH>
-                  <Table.TH className="w-25">Owner</Table.TH>
+                  <Table.TH className="w-60">Description</Table.TH>
+                  <Table.TH className="w-25">Quantity</Table.TH>
+                  <Table.TH className="w-30">Total Value</Table.TH>
+                  <Table.TH className="w-25">Shop</Table.TH>
                   <Table.TH className="w-30"></Table.TH>
                 </tr>
               </Table.THead>
@@ -183,24 +184,22 @@ function ShopList() {
                   return (
                     <tr key={c.id}>
                       <Table.TD> <img
-                            src={c.fileUrl}
-                            alt={c.fileName}
-                            className="w-full aspect-auto rounded drop-shadow-md"
-                          /></Table.TD>
+                        src={c.fileUrl}
+                        alt={c.fileName}
+                        className="w-full aspect-auto rounded drop-shadow-md" /></Table.TD>
+                      <Table.TD>{c.comboName}</Table.TD>
+                      <Table.TD>{c.description}</Table.TD>
+                      <Table.TD>{c.quantity}</Table.TD>
+                      <Table.TD>{c.totalValue}</Table.TD>
                       <Table.TD>{c.shopName}</Table.TD>
-                      <Table.TD>{c.shopEmail}</Table.TD>
-                      <Table.TD>{c.shopPhone}</Table.TD>
-                      <Table.TD>{c.address}</Table.TD>
-                      <Table.TD>{c.ownerName}</Table.TD>
-                      {/* <Table.TD>{getActionButtons(c)}</Table.TD> */}
                       <Table.TD>
                         <Select
                           onChange={(e) => {
-                           handleSelects({
-                              status:e.target.value,
-                              shop:c
-                           });
-                          }}
+                            handleSelects({
+                              status: e.target.value,
+                              shop: c
+                            });
+                          } }
                         >
                           <option>Option</option>
                           <option value="PRODUCT">View Product</option>
@@ -210,15 +209,16 @@ function ShopList() {
                         </Select>
                       </Table.TD>
                     </tr>
-                  );
+                );
                 })}
               </Table.TBody>
             </Table>
           </div>
+
         </Card.Body>
       </Card>
     </div>
   );
 }
 
-export default ShopList;
+export default ComboList;

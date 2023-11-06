@@ -111,7 +111,7 @@ export async function deleteProduct(id) {
 export async function getProducts(q) {
   console.log(q.shopId);
   console.log("Get All Product!");
-  var response = await axios.get(BASE_URL+'products'+`?pageNumber=${q.pageIndex}&pageSize=${pageSizeLimit}`,
+  var response = await axios.get(BASE_URL+`shops/${q.shopId}/products`+`?pageNumber=${q.pageIndex}&pageSize=${pageSizeLimit}`,
   {
     headers: {"Authorization": `Bearer ${BEAR_TOKEN_OWNER}`}
   })
