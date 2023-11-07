@@ -15,7 +15,7 @@ function SignIn() {
   const [state, requestSignIn] = useAPIRequest(signIn);
 
   const formik = useFormik({
-    initialValues: { email: "demo@gmail.com", password: "@Abcaz12345" },
+    initialValues: { email: "Owner@gmail.com", password: "123" },
     validate: (values) => {
       let errors = {};
       if (!values.email) {
@@ -42,7 +42,6 @@ function SignIn() {
     if (state.status === Actions.success) {
       navigate("/", { replace: true });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state]);
 
   return (

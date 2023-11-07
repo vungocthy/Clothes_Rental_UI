@@ -7,19 +7,20 @@ import { Actions, useAPIRequest } from "../../components/common/api-request";
 import { DangerButton, PrimaryButton } from "../../components/common/Buttons";
 import Card from "../../components/common/Card";
 import { LoadingContext } from "../../components/common/Contexts";
-import Modal, { ConfirmModal } from "../../components/common/Modal";
+import Modal, { ConfirmModal, ItemModal } from "../../components/common/Modal";
 import Table from "../../components/common/Table";
 import {  parseError } from "../../components/common/utils";
 import { ComboAdd,ComboEdit } from "../../components/combo/modal/ComboEdit";
 import { deleteCombo,getCombos } from "../../components/combo/ComboRepo";
 import { Select } from "../../components/common/FormControls";
 import { useNavigate } from "react-router-dom";
-import { DropDownProduct } from "../../components/combo/DropdownProduct";
+import { ProductCombo } from "../../components/combo/product-combo/ProductCombo";
 
 function ComboList() {
   const [showEdit, setShowEdit] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
+  const [showProduct, setShowProduct] = useState(false);
 
   const navigate = useNavigate();
   const loadingContext = useContext(LoadingContext);
@@ -59,20 +60,17 @@ function ComboList() {
 
   function handleSelects(a){
     console.log(a.status);
-    console.log(a.shop.id);
+    console.log(a.combo.id);
+    setCombo(a.combo);
     switch(a.status){
-      case "COMBO":
-            
-        break;
-      case "PRODUCT":
-          navigate(`/shops/${a.shop.id}/products`, { replace: true });
+      case "PRODUCT":    
+        setShowProduct(true);
         break;
       case "UPDATE":
-          setCombo(a.shop);
           setShowEdit(true);
         break;
       case "DELETE":
-          setDeleteId(a.shop.id);
+          setDeleteId(a.combo.id);
           setShowConfirm(true);
         break
       default:
@@ -80,53 +78,42 @@ function ComboList() {
     }
   }
 
-  // function getActionButtons(a) {
-  //   return (
-  //     <div className="flex space-x-2">
-  //       <PrimaryButton
-  //         onClick={() => {
-  //           setShop(a);
-  //           setShowEdit(true);
-  //         }}
-  //       >
-  //         <PencilAltIcon className="w-4 h-4" />
-  //       </PrimaryButton>
-  //       <DangerButton
-  //         onClick={() => {
-  //           setDeleteId(a.id);
-  //           setShowConfirm(true);
-  //         }}
-  //       >
-  //         <TrashIcon className="w-4 h-4" />
-  //       </DangerButton>
-  //     </div>
-  //   );
-  // }
-
   return (
     <div className="flex flex-col space-y-4">
-      <Modal title="Add Shop" isOpen={showAdd}>
+
+      <ItemModal title={"Combo"} isOpen={showProduct}>
+          <ProductCombo
+            combo={Combo}
+            handleClose={() => {
+              setShowProduct(false);
+              setCombo(undefined);
+            }}
+          />
+      </ItemModal> 
+
+
+      <Modal title="Add Combo" isOpen={showAdd}>
         <ComboAdd
           combo={Combo}
           handleClose={(result) => {
             setShowAdd(false);
             setCombo(undefined);
             if (result === true) {
-              toast.success("Shop save successfully.");
+              toast.success("Save successfully.");
               requestCombos();
             }
           }}
         />
       </Modal>
 
-      <Modal title="Edit Shop" isOpen={showEdit}>
+      <Modal title="Edit Combo" isOpen={showEdit}>
         <ComboEdit
           combo={Combo}
           handleClose={(result) => {
             setShowEdit(false);
             setCombo(undefined);
             if (result === true) {
-              toast.success("Shop save successfully.");
+              toast.success("Save successfully.");
               requestCombos();
             }
           }}
@@ -197,13 +184,12 @@ function ComboList() {
                           onChange={(e) => {
                             handleSelects({
                               status: e.target.value,
-                              shop: c
+                              combo: c
                             });
                           } }
                         >
                           <option>Option</option>
-                          <option value="PRODUCT">View Product</option>
-                          <option value="COMBO">View Combo</option>
+                          <option value="PRODUCT">Products</option>
                           <option value="UPDATE">Update</option>
                           <option value="DELETE">Delete</option>
                         </Select>

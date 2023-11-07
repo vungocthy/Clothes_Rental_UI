@@ -6,12 +6,25 @@ import {
   updatePassword,
 } from "firebase/auth";
 import { firebaseAuth } from "../firebase.config";
+import { BASE_URL } from "../constants";
+import axios from "axios";
+
+// export async function signIn({ email, password }) {
+//   const auth = firebaseAuth;
+
+//   return signInWithEmailAndPassword(auth, email, password);
+// }
 
 export async function signIn({ email, password }) {
-  const auth = firebaseAuth;
+  var response = await axios.post(BASE_URL+'authentications',
+  {
+    email:email,
+    password:password
+  });
 
-  return signInWithEmailAndPassword(auth, email, password);
+  return response.data;
 }
+
 
 export async function changePassword({ currentPassword, newPassword }) {
   const auth = firebaseAuth;

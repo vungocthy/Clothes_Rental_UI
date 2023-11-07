@@ -118,7 +118,7 @@ export async function getProducts(q) {
   .catch((err) => {
     console.log(err.message);
   });
-
+  
   return {
         list: response.data.items,
         hasPrev: response.data.previous,

@@ -176,7 +176,7 @@ function ProductList() {
                       <Table.TD>{p.productName}</Table.TD>
                       <Table.TD>{formatPrice(p.price)}</Table.TD>
                       <Table.TD>{p.material}</Table.TD>
-                      <Table.TD>{formatTimestamp(p.categoryName)}</Table.TD>
+                      <Table.TD>{p.categoryName}</Table.TD>
                       <Table.TD>{getActtionButtons(p)}</Table.TD>
                     </tr>
                   );

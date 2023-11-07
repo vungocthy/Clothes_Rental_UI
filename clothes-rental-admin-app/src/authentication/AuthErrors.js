@@ -1,10 +1,6 @@
 export function parseAuthError(code) {
-  if (code === "auth/user-not-found") {
-    return "Incorrect email address.";
-  }
-
-  if (code === "auth/wrong-password") {
-    return "Incorrect password.";
+  if (code === "ERR_BAD_REQUEST") {
+    return "Incorrect email or password.";
   }
 
   if (code === "auth/network-request-failed") {

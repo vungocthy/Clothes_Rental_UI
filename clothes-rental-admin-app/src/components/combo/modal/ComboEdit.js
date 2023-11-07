@@ -192,8 +192,11 @@ export function ComboAdd({ combo = { name: "" }, handleClose }) {
           name="quantity"
           placeholder="Enter quantity . . ."
           value={formik.values.quantity}
-          onChange={formik.handleChange}
-          error={formik.errors.quantity}
+          onChange={(e) => {
+            if (!isNaN(e.target.value)) {
+              formik.handleChange(e);
+            }
+          }}
         />
 
       </div>
@@ -202,7 +205,7 @@ export function ComboAdd({ combo = { name: "" }, handleClose }) {
 
       <div className="lg:col-span-2">
         <label className="form-control-label mb-2">
-          Shop Images *
+          Combo Images *
         </label>
         <ComboImages
           images={formik.values.images}

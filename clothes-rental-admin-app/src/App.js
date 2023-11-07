@@ -18,7 +18,7 @@ import Settings from "./setting/Settings";
 import Template from "./components/template/Template";
 import CustomerList from "./pages/customer/CustomerList";
 import ComboList from "./pages/combo/ComboList";
-
+import { signIn } from "./authentication/AuthRepo";
 export const baseImagePath = process.env.REACT_APP_FIREBASE_STORAGE_PATH;
 
 function App() {
@@ -60,10 +60,11 @@ function App() {
       setLoading(false);
     });
 
+
     return () => {
       unsubscribe();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, []);
 
   if (initializing) {
