@@ -48,13 +48,12 @@ function OwnerList() {
   useEffect(() => {
     loadingContext.setLoading(delState.status === Actions.loading);
     if (delState.status === Actions.success) {
-      toast.success("Author deleted successfully.");
+      toast.success("Owner deleted successfully.");
       requestOwners();
     }
     if (delState.status === Actions.failure) {
       toast.error(parseError(delState.error));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [delState]);
 
   function getActionButtons(a) {

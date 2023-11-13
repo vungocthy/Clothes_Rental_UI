@@ -1,20 +1,19 @@
 import { useFormik } from "formik";
-import { useState,useEffect } from "react";
+import { useContext,useState,useEffect } from "react";
 import { useParams } from "react-router-dom";
 import Alert from "../../common/Alert";
 import { Actions, useAPIRequest } from "../../common/api-request";
-import { DefaultButton, PrimaryButton } from "../../common/Buttons";
+import { DangerButton, DefaultButton, PrimaryButton } from "../../common/Buttons";
 import { Input } from "../../common/FormControls";
 import {formatPrice, parseError } from "../../common/utils";
 import { saveProductCombo,addProductCombo } from "../ComboRepo";
-
+import { LoadingContext } from "../../common/Contexts";
 import { PlusIcon } from "@heroicons/react/solid";
-import { DangerButton } from "../../common/Buttons";
+import { toast } from "react-toastify";
 import Card from "../../common/Card";
 import Table from "../../common/Table";
 import Pagination from "../../common/Pagination";
-
-
+import { getNonProductCombo } from "../ComboRepo";
 
 export function ProductComboEdit({productCombo = { name: "" }, handleClose }) {
   const [state, requestSave] = useAPIRequest(saveProductCombo);
@@ -110,14 +109,67 @@ export function ProductComboEdit({productCombo = { name: "" }, handleClose }) {
 
 
 export function ProductComboAdd({comboId, handleClose }) {
-  let params = useParams();
-  const [productListState, requestProducts] = useAPIRequest();
+  const params=useParams();
+  const loadingContext = useContext(LoadingContext);
+
+  const [productListState, requestProducts] = useAPIRequest(getNonProductCombo);
+  const [addState,requestAdd]=useAPIRequest(addProductCombo);
+
   const [productList, setProductList] = useState([]);
   const [query, setQuery] = useState({
-    comboId:params.id,
+    shopId:params.id,
+    comboId:comboId,
     pageIndex: 0,
   });
   const [paging, setPaging] = useState({ hasPrev: false, hasNext: false });
+
+  useEffect(() => {
+    requestProducts(query);
+  }, [query]);
+
+  useEffect(() => {
+    loadingContext.setLoading(productListState.status === Actions.loading);
+    if (productListState.status === Actions.success) {
+        let payload = productListState.payload?.list ?? [];
+        setProductList(payload);
+        setPaging({
+        hasNext: productListState.payload?.hasNext,
+        hasPrev: productListState.payload?.hasPrev,
+        });
+        if (payload.length === 0) {
+        toast.info("No Product found.");
+        }
+    }
+  }, [productListState]);
+
+  useEffect(() => {
+    loadingContext.setLoading(addState.status === Actions.loading);
+    if (addState.status === Actions.success) {
+        toast.success("Product added successfully.");
+        requestProducts(query);
+    }
+    if (addState.status === Actions.failure) {
+        toast.error(parseError(addState.error));
+    }
+    }, [addState]); 
+
+  function getActtionButtons(p) {
+    return (
+      <div className="flex space-x-2">
+        <DangerButton
+          onClick={() => {
+            requestAdd({
+              comboId:comboId,
+              quantity:0,
+              productId:p.id
+            });
+          }}
+        >
+          <PlusIcon className="w-10 h-4" />
+        </DangerButton>
+      </div>
+    );
+  }
 
   return(
     <div className="flex flex-col space-y-4">
@@ -143,7 +195,7 @@ export function ProductComboAdd({comboId, handleClose }) {
                 <Table.TH className="w-40">Image</Table.TH>
                 <Table.TH className="w-40 md:w-full">Name</Table.TH>
                 <Table.TH className="w-40">Price</Table.TH>
-                <Table.TH className="w-40">Quantity</Table.TH>
+                <Table.TH className="w-40">Compesation</Table.TH>
                 <Table.TH className="w-24">Material</Table.TH>
                 <Table.TH className="w-60">Category</Table.TH>
                 <Table.TH className="w-44"></Table.TH>
@@ -164,10 +216,10 @@ export function ProductComboAdd({comboId, handleClose }) {
                     </Table.TD>
                     <Table.TD>{p.productName}</Table.TD>
                     <Table.TD>{formatPrice(p.price)}</Table.TD>
-                    <Table.TD>{p.quantity}</Table.TD>
+                    <Table.TD>{p.compesation}</Table.TD>
                     <Table.TD>{p.material}</Table.TD>
                     <Table.TD>{p.categoryName}</Table.TD>
-                    <Table.TD><PlusIcon className="w-5 h-5 mr-2" /></Table.TD>
+                    <Table.TD>{getActtionButtons(p)}</Table.TD>
                   </tr>
                 );
               })}

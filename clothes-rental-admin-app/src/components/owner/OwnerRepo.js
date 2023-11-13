@@ -1,10 +1,10 @@
 import axios from "axios";
-import {BASE_URL,BEAR_TOKEN_OWNER} from "../../constants/index.js";
+import {BASE_URL,BEAR_TOKEN} from "../../constants/index.js";
 
 const requestDeleteOptions = {
   method: 'DELETE',
   headers: { 
-    "Authorization": `Bearer ${BEAR_TOKEN_OWNER}`
+    "Authorization": `Bearer ${BEAR_TOKEN}`
   }
 };
 
@@ -22,7 +22,7 @@ export async function addOwner(owner) {
   },
   {
     headers:{
-      Authorization: `Bearer ${BEAR_TOKEN_OWNER}`
+      Authorization: `Bearer ${BEAR_TOKEN}`
     }
   })
   .then(response =>console.log("Added!"))
@@ -45,7 +45,7 @@ export async function saveOwner(owner) {
   },
   {
     headers:{
-      Authorization: `Bearer ${BEAR_TOKEN_OWNER}`
+      Authorization: `Bearer ${BEAR_TOKEN}`
     }
   })
   .then(response =>console.log("Updated!"))
@@ -58,7 +58,7 @@ export async function getOwner(id) {
   console.log(`Get Owners by ${id}!`);
   var response = await axios.get(BASE_URL+'users'+id,
   {
-    headers: {"Authorization": `Bearer ${BEAR_TOKEN_OWNER}`}
+    headers: {"Authorization": `Bearer ${BEAR_TOKEN}`}
   })
   .catch((err) => {
     console.log(err.message);
@@ -78,7 +78,7 @@ export async function getOwners() {
   console.log("Get all owners!");
   var response = await axios.get(BASE_URL+'owners',
     {
-      headers:{"Authorization": `Bearer ${BEAR_TOKEN_OWNER}`}
+      headers:{"Authorization": `Bearer ${BEAR_TOKEN}`}
     }
   )
   .catch((err)=>{

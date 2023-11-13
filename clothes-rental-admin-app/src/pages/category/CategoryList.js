@@ -13,6 +13,7 @@ import { deleteCategory, getCategories } from "../../components/category/Categor
 import { parseError, formatTimestamp } from "../../components/common/utils";
 import { toast } from "react-toastify";
 
+import { Role } from "../../constants";
 
 function CategoryList() {
   const [showEdit, setShowEdit] = useState(false);
@@ -136,13 +137,17 @@ useEffect(() => {
         <Card.Header>
           <div className="flex items-center">
             <h3 className="text-gray-600">Categories</h3>
-            <PrimaryButton
+            {
+              Role==='Admin'? <PrimaryButton
               className="ml-auto"
               onClick={() => setShowAdd(true)}
             >
               <PlusIcon className="w-5 h-5 mr-2" />
               Add New
             </PrimaryButton>
+            :null
+            }
+            
           </div>
         </Card.Header>
         <Card.Body>
@@ -152,7 +157,10 @@ useEffect(() => {
                 <tr>
                   <Table.TH className="w-40 md:w-full">Name</Table.TH>
                   <Table.TH className="w-60">Created At</Table.TH>
-                  <Table.TH className="w-44"></Table.TH>
+                  {
+                    Role==='Admin'?<Table.TH className="w-44"></Table.TH>:null
+                  }
+                  
                 </tr>
               </Table.THead>
 
@@ -162,7 +170,9 @@ useEffect(() => {
                     <tr key={c.id}>
                       <Table.TD>{c.categoryName}</Table.TD>
                       <Table.TD>{formatTimestamp(c.creationDate)}</Table.TD>
-                      <Table.TD>{getActionButtons(c)}</Table.TD>
+                      {
+                        Role==='Admin'?<Table.TD>{getActionButtons(c)}</Table.TD>:null
+                      }                 
                     </tr>
                   );
                 })}

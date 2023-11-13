@@ -4,11 +4,11 @@ import { getFirestore } from "firebase/firestore/lite";
 import { getStorage } from "firebase/storage";
 
 const firebaseApp = initializeApp({
-  apiKey: "AIzaSyB3dDVx4u3UXLOjgkuNZyswIm_1QCgOATQ",
-  authDomain: "fir-b006c.firebaseapp.com",
-  projectId: "fir-b006c",
-  storageBucket: "fir-b006c.appspot.com",
-  appId: "1:451342239501:web:31abec51b2251710719244",
+  apiKey: "AIzaSyD8jIG3rxybg8_SsskVhiHV8K6dBOCgNvk",
+  authDomain: "clothes-rental-app.firebaseapp.com",
+  projectId: "clothes-rental-app",
+  storageBucket: "clothes-rental-app.appspot.com",
+  appId: "1:659100578167:web:2e597be08644acea7ab172",
 });
 
 export const firestore = getFirestore(firebaseApp);

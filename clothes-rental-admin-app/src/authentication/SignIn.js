@@ -8,14 +8,15 @@ import Card from "../components/common/Card";
 import { Input, PasswordInput } from "../components/common/FormControls";
 import Footer from "../components/template/Footer";
 import { parseAuthError } from "./AuthErrors";
-import { signIn } from "./AuthRepo";
+import { signIn,getToken } from "./AuthRepo";
 
 function SignIn() {
   const navigate = useNavigate();
   const [state, requestSignIn] = useAPIRequest(signIn);
+  const [token,requestToken]=useAPIRequest(getToken);
 
   const formik = useFormik({
-    initialValues: { email: "Owner@gmail.com", password: "123" },
+    initialValues: { email: "owner@gmail.com", password: "123456" },
     validate: (values) => {
       let errors = {};
       if (!values.email) {
@@ -31,6 +32,7 @@ function SignIn() {
     validateOnChange: false,
     onSubmit: (values) => {
       requestSignIn(values);
+      requestToken(values);
     },
   });
 
@@ -40,6 +42,9 @@ function SignIn() {
     }
 
     if (state.status === Actions.success) {
+      localStorage.setItem("Token",token.payload.accessToken);
+      localStorage.setItem("Role",token.payload.role);
+      localStorage.setItem("Id",token.payload.id);
       navigate("/", { replace: true });
     }
   }, [state]);

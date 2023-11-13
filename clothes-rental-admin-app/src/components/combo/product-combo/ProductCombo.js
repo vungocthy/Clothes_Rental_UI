@@ -13,21 +13,18 @@ import { formatPrice, formatTimestamp, parseError } from "../../common/utils";
 import { toast } from "react-toastify";
 import Modal,{ ConfirmModal, ItemModal, ItemModalAdd } from "../../common/Modal";
 import Alert from "../../common/Alert";
-import { useParams } from "react-router-dom";
 import { DefaultButton } from '../../common/Buttons';
 import { getProductCombo,deleteProductCombo } from "../ComboRepo";
 import { ProductComboAdd, ProductComboEdit } from "./ProductComboEdit";
+import { Role} from "../../../constants";
 
 export function ProductCombo({combo , handleClose }){
-
-    let params = useParams();
+  
     const loadingContext = useContext(LoadingContext);
     const [showEdit, setShowEdit] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
     const [showAdd,setShowAdd]=useState(false);
-    const [deleteId, setDeleteId] = useState();
-    
-
+    const [deleteId, setDeleteId] = useState(); 
 
     const [productCombo,setProductCombo]=useState();
     const [productList, setProductList] = useState([]);
@@ -35,7 +32,7 @@ export function ProductCombo({combo , handleClose }){
   
     const [delState, requestDelete] = useAPIRequest(deleteProductCombo);
     const [query, setQuery] = useState({
-      comboId:params.id,
+      comboId:combo?combo.id:null,
       pageIndex: 0,
     });
   
@@ -43,28 +40,25 @@ export function ProductCombo({combo , handleClose }){
 
 
     useEffect(() => {
-    loadingContext.setLoading(productListState.status === Actions.loading);
-    if (productListState.status === Actions.success) {
-        let payload = productListState.payload?.list ?? [];
-        setProductList(payload);
-        setPaging({
-        hasNext: productListState.payload?.hasNext,
-        hasPrev: productListState.payload?.hasPrev,
-        });
-        if (payload.length === 0) {
-        toast.info("No Product found.");
-        }
-    }
+      loadingContext.setLoading(productListState.status === Actions.loading);
+      if (productListState.status === Actions.success) {
+          let payload = productListState.payload?.list ?? [];
+          setProductList(payload);
+          setPaging({
+          hasNext: productListState.payload?.hasNext,
+          hasPrev: productListState.payload?.hasPrev,
+          });
+          if (payload.length === 0) {
+          toast.info("No Product found.");
+          }
+      }
     }, [productListState]);
 
     useEffect(() => {
     loadingContext.setLoading(delState.status === Actions.loading);
     if (delState.status === Actions.success) {
         toast.success("Product deleted successfully.");
-        requestProducts({
-        shopId:params.id,
-        pageIndex: 0
-        });
+        requestProducts(query);
     }
     if (delState.status === Actions.failure) {
         toast.error(parseError(delState.error));
@@ -105,7 +99,7 @@ export function ProductCombo({combo , handleClose }){
 
        <ItemModalAdd isOpen={showAdd}>
           <ProductComboAdd
-            comboId={params.id}
+            comboId={combo?combo.id:null}
             handleClose={() => {
               setShowAdd(false);
               requestProducts(query);
@@ -149,13 +143,18 @@ export function ProductCombo({combo , handleClose }){
           <Card.Header>
             <div className="flex items-center">
               <h3 className="text-gray-600">Combo - {combo ? combo.comboName : "Combo"}</h3>
-              <PrimaryButton
-                className="ml-auto"
-                onClick={() => setShowAdd(true)}
-              >
-                <PlusIcon className="w-5 h-5 mr-2" />
-                Add New
-              </PrimaryButton>
+              {
+                Role==='Owner'?
+                <PrimaryButton
+                  className="ml-auto"
+                  onClick={() => setShowAdd(true)}
+                >
+                  <PlusIcon className="w-5 h-5 mr-2" />
+                  Add New
+                </PrimaryButton>
+                :null
+              }
+              
             </div>
           </Card.Header>
           <Card.Body className="flex flex-col space-y-2">
@@ -170,7 +169,10 @@ export function ProductCombo({combo , handleClose }){
                     <Table.TH className="w-40">Quantity</Table.TH>
                     <Table.TH className="w-24">Material</Table.TH>
                     <Table.TH className="w-60">Category</Table.TH>
-                    <Table.TH className="w-44"></Table.TH>
+                    {
+                      Role==='Owner'?<Table.TH className="w-44"></Table.TH>:null
+                    }
+                    
                   </tr>
                 </Table.THead>
                 <Table.TBody>
@@ -191,7 +193,10 @@ export function ProductCombo({combo , handleClose }){
                         <Table.TD>{p.quantity}</Table.TD>
                         <Table.TD>{p.material}</Table.TD>
                         <Table.TD>{p.categoryName}</Table.TD>
-                        <Table.TD>{getActtionButtons(p)}</Table.TD>
+                        {
+                          Role==='Owner'?<Table.TD>{getActtionButtons(p)}</Table.TD>:null
+                        }
+                        
                       </tr>
                     );
                   })}

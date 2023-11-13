@@ -10,15 +10,13 @@ import Dashboard from "./pages/dashboard/Dashboard";
 import NotFound from "./components/error/404";
 import { firebaseAuth } from "./firebase.config";
 import NotificationList from "./pages/notification/NotificationList";
-import OrderDetail from "./order/OrderDetail";
-import OrderList from "./order/OrderList";
-import {ProductEdit,ProductAdd} from "./product/ProductEdit";
-import ProductList from "./product/ProductList";
+import OrderList from "./pages/order/OrderList";
 import Settings from "./setting/Settings";
 import Template from "./components/template/Template";
 import CustomerList from "./pages/customer/CustomerList";
 import ComboList from "./pages/combo/ComboList";
-import { signIn } from "./authentication/AuthRepo";
+import ProductList from "./pages/product/ProductList";
+
 export const baseImagePath = process.env.REACT_APP_FIREBASE_STORAGE_PATH;
 
 function App() {
@@ -80,25 +78,14 @@ function App() {
             {/* <Route path="shops" element={<ShopList />} /> */}
             <Route path="shops">
               <Route index element={<ShopList />} />
-              <Route path=":id/products" >
-                  <Route index element={<ProductList />} />
-                  <Route path="new" element={<ProductAdd />} />
-                  <Route path=":productid" element={<ProductEdit />} />
-              </Route>
+              <Route path=":id/products"  element={<ProductList />}/>
               <Route path=":id/combos" element={<ComboList/>} />
+              <Route path=":id/orders" element={<OrderList />} />
             </Route>
             <Route path="categories" element={<CategoryList />} />
             <Route path="owners" element={<OwnerList/>} />
             <Route path="customers" element={<CustomerList/>} />
-            {/* <Route path="books">
-              <Route index element={<ProductList />} />
-              <Route path="new" element={<ProductAdd />} />
-              <Route path=":id" element={<ProductEdit />} />
-            </Route> */}
-            <Route path="orders">
-              <Route index element={<OrderList />} />
-              <Route path=":id" element={<OrderDetail />} />
-            </Route>
+
             <Route path="app-notifications" element={<NotificationList />} />
             <Route path="settings" element={<Settings />} />
           </Route>

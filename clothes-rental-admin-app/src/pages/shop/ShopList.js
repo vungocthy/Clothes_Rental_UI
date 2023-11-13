@@ -11,10 +11,10 @@ import Modal, { ConfirmModal } from "../../components/common/Modal";
 import Table from "../../components/common/Table";
 import {  parseError } from "../../components/common/utils";
 import {ShopAdd, ShopEdit} from "../../components/shop/modal/ShopEdit";
-import { deleteShop, getShops } from "../../components/shop/ShopRepo";
+import { deleteShop, getShops,getShopsByOwnerId } from "../../components/shop/ShopRepo";
 import { Select } from "../../components/common/FormControls";
 import { useNavigate } from "react-router-dom";
-
+import { Role } from "../../constants";
 function ShopList() {
   const [showEdit, setShowEdit] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -27,12 +27,11 @@ function ShopList() {
   const [shop, setShop] = useState();
   const [deleteId, setDeleteId] = useState();
 
-  const [listState, requestShops] = useAPIRequest(getShops);
+  const [listState, requestShops] = useAPIRequest(Role==="Admin"?getShops:getShopsByOwnerId);
   const [delState, requestDelete] = useAPIRequest(deleteShop);
 
   useEffect(() => {
     requestShops();
-
     return () => {
       loadingContext.setLoading(false);
     };
@@ -57,7 +56,6 @@ function ShopList() {
   }, [delState]);
 
   function handleSelects(a){
-    console.log(a.status);
     console.log(a.shop.id);
     switch(a.status){
       case "COMBO":
@@ -73,6 +71,9 @@ function ShopList() {
       case "DELETE":
           setDeleteId(a.shop.id);
           setShowConfirm(true);
+        break
+      case "ORDER":
+        navigate(`/shops/${a.shop.id}/orders`, { replace: true });
         break
       default:
         break;
@@ -154,13 +155,18 @@ function ShopList() {
         <Card.Header>
           <div className="flex items-center">
             <h3 className="text-gray-600">Shops</h3>
-            <PrimaryButton
-              className="ml-auto"
-              onClick={() => setShowAdd(true)}
-            >
-            <PlusIcon className="w-5 h-5 mr-2" />
-              Add New
-            </PrimaryButton>
+            {
+              Role==='Admin'?
+              <PrimaryButton
+                className="ml-auto"
+                onClick={() => setShowAdd(true)}
+              >
+                <PlusIcon className="w-5 h-5 mr-2" />
+                  Add New
+              </PrimaryButton>
+              :null
+            }
+            
           </div>
         </Card.Header>
         <Card.Body>
@@ -203,10 +209,17 @@ function ShopList() {
                           }}
                         >
                           <option>Option</option>
-                          <option value="PRODUCT">View Product</option>
-                          <option value="COMBO">View Combo</option>
-                          <option value="UPDATE">Update</option>
-                          <option value="DELETE">Delete</option>
+                          <option value="PRODUCT">View Products</option>
+                          <option value="COMBO">View Combos</option>
+                          {
+                            Role==='Admin'?
+                            <>
+                              <option value="UPDATE">Update</option>
+                              <option value="DELETE">Delete</option>
+                            </>
+                            :
+                            <option value="ORDER">View Orders</option>
+                          }
                         </Select>
                       </Table.TD>
                     </tr>

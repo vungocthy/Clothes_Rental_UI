@@ -7,8 +7,8 @@ import { Input } from "../../common/FormControls";
 import { parseError } from "../../common/utils";
 import { addShop,  saveShop } from "../ShopRepo";
 import ShopImages from "../ShopImages";
-
-
+import { getOwners } from "../../owner/OwnerRepo";
+import { default as ReactSelect } from "react-select";
 
 export function ShopEdit({shop = { name: "" }, handleClose }) {
   const [state, requestSave] = useAPIRequest(saveShop);
@@ -136,6 +136,11 @@ export function ShopEdit({shop = { name: "" }, handleClose }) {
 export function ShopAdd({ shop = { name: "" }, handleClose }) {
   //console.log(owner);
   const [state, requestAdd] = useAPIRequest(addShop);
+  const [owberState,requestOwner]=useAPIRequest(getOwners);
+
+  useEffect(()=>{
+    requestOwner();
+  },[]);
 
   const formik = useFormik({
     enableReinitialize: true,
@@ -173,6 +178,10 @@ export function ShopAdd({ shop = { name: "" }, handleClose }) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state]);
+
+  function handleQueryChange(id){
+    formik.setFieldValue('ownerId', id);
+  }
 
   return (
     <form onSubmit={formik.handleSubmit} className="flex flex-col mt-4">
@@ -217,6 +226,42 @@ export function ShopAdd({ shop = { name: "" }, handleClose }) {
           onChange={formik.handleChange}
           error={formik.errors.address}
         />
+      </div>
+      <div className="mr-3 mb-2">
+        <ReactSelect
+          name="OwnerId"
+          styles={{
+            control: (css, state) => ({
+              ...css,
+              width: "103%",
+              padding: 2,
+              boxShadow: "none",
+            }),
+          }}
+          theme={(theme) => ({
+            ...theme,
+            colors: {
+              ...theme.colors,
+              primary25: "#e0e7ff",
+              primary: "#6366f1",
+            },
+          })}
+
+          defaultValue={formik.values.ownerId}
+          onChange={(newValue, action) => {
+            handleQueryChange({ id: newValue?.id });
+          }}
+          isDisabled={false}
+          isLoading={false}
+          isClearable={true}
+          isRtl={false}
+          isSearchable={true}
+          placeholder="By owner"
+          options={owberState.payload}
+          getOptionValue={(op) => op.id}
+          getOptionLabel={(op) => op.name}
+        >
+        </ReactSelect>
       </div>
 
       <hr className="lg:col-span-2 my-2" />

@@ -9,13 +9,13 @@ import { firebaseAuth } from "../firebase.config";
 import { BASE_URL } from "../constants";
 import axios from "axios";
 
-// export async function signIn({ email, password }) {
-//   const auth = firebaseAuth;
-
-//   return signInWithEmailAndPassword(auth, email, password);
-// }
-
 export async function signIn({ email, password }) {
+  const auth = firebaseAuth;
+
+  return signInWithEmailAndPassword(auth, email, password);
+}
+
+export async function getToken({ email, password }) {
   var response = await axios.post(BASE_URL+'authentications',
   {
     email:email,
@@ -49,6 +49,7 @@ export async function changePassword({ currentPassword, newPassword }) {
 
 export async function logout() {
   const auth = firebaseAuth;
-
+  localStorage.removeItem("Token");
+  localStorage.removeItem("Role");
   return signOut(auth);
 }

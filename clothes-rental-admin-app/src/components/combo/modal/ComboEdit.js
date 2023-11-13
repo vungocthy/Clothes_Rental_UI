@@ -121,8 +121,7 @@ export function ComboEdit({combo = { name: "" }, handleClose }) {
 }
 
 
-export function ComboAdd({ combo = { name: "" }, handleClose }) {
-  //console.log(owner);
+export function ComboAdd({ shopId,combo = { name: "" }, handleClose }) {
   const [state, requestAdd] = useAPIRequest(addCombo);
 
   const formik = useFormik({
@@ -145,7 +144,10 @@ export function ComboAdd({ combo = { name: "" }, handleClose }) {
     validateOnBlur: false,
     validateOnChange: false,
     onSubmit: (values) => {
-      requestAdd(values);
+      requestAdd({
+        shopId:shopId,
+        combo:values
+      });
     },
   });
 
@@ -157,7 +159,6 @@ export function ComboAdd({ combo = { name: "" }, handleClose }) {
     if (state.status === Actions.success) {
       handleClose(true);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state]);
 
   return (

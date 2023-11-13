@@ -14,6 +14,8 @@ import { useState } from "react";
 import { usePopper } from "react-popper";
 import { NavLink } from "react-router-dom";
 
+import { Role } from "../../constants";
+
 const headerHeight = 72;
 // const categoryMenus = [
 //   { path: "/categories", title: "Categories" },
@@ -157,8 +159,19 @@ function SideMenu() {
             <ShoppingBagIcon className="icon" />
             <span className="hidden lg:inline flex-grow">Shops</span>
           </SideMenuDisclosure> */}
-
-
+          
+          <NavLink
+            to="/categories"
+            replace={true}
+            className={({ isActive }) =>
+              `my-4 side-menu-item ${isActive ? "active" : ""}`
+            }
+          >
+            <TagIcon className="icon" />
+            <span className="hidden lg:inline flex-grow">Categories</span>
+          </NavLink>
+          
+                  
           <NavLink
             to="/shops"
             replace={true}
@@ -170,21 +183,16 @@ function SideMenu() {
             <span className="hidden lg:inline flex-grow">Shops</span>
           </NavLink>
 
-          <NavLink
-            to="/categories"
-            replace={true}
-            className={({ isActive }) =>
-              `my-4 side-menu-item ${isActive ? "active" : ""}`
-            }
-          >
-            <TagIcon className="icon" />
-            <span className="hidden lg:inline flex-grow">Categories</span>
-          </NavLink>
-            
-          <SideMenuDisclosure list={userMenus}>
-            <UserIcon className="icon" />
-            <span className="hidden lg:inline flex-grow">Users</span>
-          </SideMenuDisclosure>
+          {
+            Role==='Admin'?
+            <SideMenuDisclosure list={userMenus}>
+              <UserIcon className="icon" />
+              <span className="hidden lg:inline flex-grow">Users</span>
+            </SideMenuDisclosure>
+            :null
+          }  
+          
+          
 
 
           {/* <NavLink
@@ -219,7 +227,7 @@ function SideMenu() {
             <BookOpenIcon className="icon" />
             <span className="hidden lg:inline">Books</span>
           </NavLink> */}
-
+{/* 
           <NavLink
             to="/orders"
             replace={true}
@@ -229,7 +237,7 @@ function SideMenu() {
           >
             <InboxInIcon className="icon" />
             <span className="hidden lg:inline">Orders</span>
-          </NavLink>
+          </NavLink> */}
 
           <NavLink
             to="/app-notifications"

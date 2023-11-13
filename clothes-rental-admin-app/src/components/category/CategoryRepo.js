@@ -1,10 +1,10 @@
 import axios from "axios";
-import {BASE_URL,BEAR_TOKEN_OWNER} from "../../constants/index.js";
+import {BASE_URL, BEAR_TOKEN} from "../../constants/index.js";
 
 const requestDeleteOptions = {
   method: 'DELETE',
   headers: { 
-    "Authorization": `Bearer ${BEAR_TOKEN_OWNER}`
+    "Authorization": `Bearer ${BEAR_TOKEN}`
   }
 };
 
@@ -16,7 +16,7 @@ export async function addCategory(category){
   ,{
     headers:{
       "Content-Type": ' multipart/form-data' ,
-      Authorization: `Bearer ${BEAR_TOKEN_OWNER}`
+      Authorization: `Bearer ${BEAR_TOKEN}`
     }
   })
   .then(response =>console.log('Added!'))
@@ -35,7 +35,7 @@ export async function saveCategory(category) {
   ,{
     headers:{
       "Content-Type": ' multipart/form-data' ,
-      Authorization: `Bearer ${BEAR_TOKEN_OWNER}`
+      Authorization: `Bearer ${BEAR_TOKEN}`
     }
   })
   .then(response =>console.log("Updated!"))
@@ -48,7 +48,7 @@ export async function getCategory(id) {
   console.log(`Get Category by ${id}!`);
   var response = await axios.get(BASE_URL+'categories'+id,
   {
-    headers: {"Authorization": `Bearer ${BEAR_TOKEN_OWNER}`}
+    headers: {"Authorization": `Bearer ${BEAR_TOKEN}`}
   })
   .catch((err) => {
     console.log(err.message);
@@ -69,7 +69,7 @@ export async function getCategories() {
   console.log("Get All Categories!");
   var response = await axios.get(BASE_URL+'categories',
   {
-    headers: {"Authorization": `Bearer ${BEAR_TOKEN_OWNER}`}
+    headers: {"Authorization": `Bearer ${BEAR_TOKEN}`}
   })
   .catch((err) => {
     console.log(err.message);

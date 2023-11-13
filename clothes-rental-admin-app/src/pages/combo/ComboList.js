@@ -13,16 +13,18 @@ import {  parseError } from "../../components/common/utils";
 import { ComboAdd,ComboEdit } from "../../components/combo/modal/ComboEdit";
 import { deleteCombo,getCombos } from "../../components/combo/ComboRepo";
 import { Select } from "../../components/common/FormControls";
-import { useNavigate } from "react-router-dom";
 import { ProductCombo } from "../../components/combo/product-combo/ProductCombo";
+import { Role } from "../../constants";
+import { useParams } from "react-router-dom";
+
 
 function ComboList() {
+  const params= useParams();
   const [showEdit, setShowEdit] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
   const [showProduct, setShowProduct] = useState(false);
 
-  const navigate = useNavigate();
   const loadingContext = useContext(LoadingContext);
 
   const [list, setList] = useState([]);
@@ -33,7 +35,7 @@ function ComboList() {
   const [delState, requestDelete] = useAPIRequest(deleteCombo);
 
   useEffect(() => {
-    requestCombos();
+    requestCombos(params.id);
 
     return () => {
       loadingContext.setLoading(false);
@@ -51,7 +53,7 @@ function ComboList() {
     loadingContext.setLoading(delState.status === Actions.loading);
     if (delState.status === Actions.success) {
       toast.success("Author deleted successfully.");
-      requestCombos();
+      requestCombos(params.id);
     }
     if (delState.status === Actions.failure) {
       toast.error(parseError(delState.error));
@@ -59,8 +61,6 @@ function ComboList() {
   }, [delState]);
 
   function handleSelects(a){
-    console.log(a.status);
-    console.log(a.combo.id);
     setCombo(a.combo);
     switch(a.status){
       case "PRODUCT":    
@@ -78,6 +78,7 @@ function ComboList() {
     }
   }
 
+
   return (
     <div className="flex flex-col space-y-4">
 
@@ -87,6 +88,7 @@ function ComboList() {
             handleClose={() => {
               setShowProduct(false);
               setCombo(undefined);
+              requestCombos(params.id);
             }}
           />
       </ItemModal> 
@@ -94,13 +96,14 @@ function ComboList() {
 
       <Modal title="Add Combo" isOpen={showAdd}>
         <ComboAdd
+          shopId={params.id}
           combo={Combo}
           handleClose={(result) => {
             setShowAdd(false);
             setCombo(undefined);
             if (result === true) {
               toast.success("Save successfully.");
-              requestCombos();
+              requestCombos(params.id);
             }
           }}
         />
@@ -114,7 +117,7 @@ function ComboList() {
             setCombo(undefined);
             if (result === true) {
               toast.success("Save successfully.");
-              requestCombos();
+              requestCombos(params.id);
             }
           }}
         />
@@ -141,14 +144,20 @@ function ComboList() {
       <Card>
         <Card.Header>
           <div className="flex items-center">
-            <h3 className="text-gray-600">Shops</h3>
-            <PrimaryButton
-              className="ml-auto"
-              onClick={() => setShowAdd(true)}
-            >
-            <PlusIcon className="w-5 h-5 mr-2" />
-              Add New
-            </PrimaryButton>
+            <h3 className="text-gray-600">Combos</h3>
+            {
+              Role==='Owner'?
+              <PrimaryButton
+                className="ml-auto"
+                onClick={() => setShowAdd(true)}
+              >
+            
+                <PlusIcon className="w-5 h-5 mr-2" />
+                  Add New
+              </PrimaryButton>
+              :null
+            }
+            
           </div>
         </Card.Header>
         <Card.Body>
@@ -190,10 +199,19 @@ function ComboList() {
                         >
                           <option>Option</option>
                           <option value="PRODUCT">Products</option>
-                          <option value="UPDATE">Update</option>
-                          <option value="DELETE">Delete</option>
+                          {
+                            Role==='Owner'?
+                            <>
+                              <option value="UPDATE">Update</option>
+                              <option value="DELETE">Delete</option>
+                            </>
+                            :null
+                          }
                         </Select>
                       </Table.TD>
+                          
+                        
+                      
                     </tr>
                 );
                 })}
